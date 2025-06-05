@@ -13,15 +13,32 @@ from tensorflow.keras import layers, optimizers, datasets
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # or any {'0', '1', '2'}
 
-
-def mnist_dataset():
+def mnist_dataset(batch_size=64):
+    # 加载MNIST数据集
     (x, y), (x_test, y_test) = datasets.mnist.load_data()
-    #normalize
     
-    x = x/255.0
-    x_test = x_test/255.0
+# 将图像数据reshape并归一化
+    x = x.reshape(-1, 28, 28, 1).astype('float32') / 255.0
+    x_test = x_test.reshape(-1, 28, 28, 1).astype('float32') / 255.0
     
-    return (x, y), (x_test, y_test)
+    # 创建训练数据集并打乱
+    train_ds = tf.data.Dataset.from_tensor_slices((x, y))
+    train_ds = train_ds.shuffle(buffer_size=1024)  # 打乱数据，buffer_size越大，打乱效果越好
+    train_ds = train_ds.batch(batch_size)  # 分批次
+    
+    # 创建测试数据集
+    test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+    test_ds = test_ds.batch(batch_size)  # 测试数据也可以分批次
+    
+    return train_ds, test_ds
+ 
+# 使用示例
+train_ds, test_ds = mnist_dataset(batch_size=64)
+ 
+# 遍历数据集
+for batch_x, batch_y in train_ds:
+    print("Batch shape:", batch_x.shape, batch_y.shape)
+    # 在这里进行训练步骤
 
 
 # In[8]:
