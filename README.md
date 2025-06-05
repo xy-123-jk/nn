@@ -5,6 +5,10 @@
 
 实现基于Carla的车辆、行人的感知、规划、控制。
 
+
+
+
+
 ## 环境配置
 * 平台：Windows 10/11，Ubuntu 20.04/22.04
 * 软件：Python 3.7-3.12（需支持3.7）、Pytorch（不使用Tensorflow）
