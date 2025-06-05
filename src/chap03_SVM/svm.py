@@ -9,7 +9,7 @@ def load_data(fname):
     with open(fname, 'r') as f:
         data = []
         line = f.readline()
-        for line in f:
+        for line in f: # 直接遍历文件对象，避免跳过第一行
             line = line.strip().split()
             x1 = float(line[0])
             x2 = float(line[1])
@@ -30,6 +30,7 @@ class SVM():
         self.learning_rate = 0.01
         self.reg_lambda = 0.01
         self.max_iter = 1000
+        self.tol = tol  # 收敛阈值
         self.w = None  # 权重向量
         self.b = None  # 偏置项
 
@@ -45,12 +46,14 @@ class SVM():
         self.w = np.zeros(n)
         self.b = 0
         
+        prev_loss = float('inf')
         for epoch in range(self.max_iter):
             # 计算函数间隔
             margin = y * (np.dot(X, self.w) + self.b)
             # 找出违反间隔条件的样本（margin < 1）
             idx = np.where(margin < 1)[0]
-            
+
+        if len(idx) > 0:
             # 计算梯度
             dw = (2 * self.reg_lambda * self.w) - np.mean(y[idx].reshape(-1, 1) * X[idx], axis=0)
             db = -np.mean(y[idx])
