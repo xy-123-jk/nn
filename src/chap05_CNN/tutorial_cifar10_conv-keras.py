@@ -19,6 +19,7 @@ from tensorflow.keras import layers, optimizers, datasets
 from tensorflow.keras.layers import Dense, Dropout, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
 
+# 设置TensorFlow日志级别，2表示只显示错误信息
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # or any {'0', '1', '2'}
 
 
@@ -37,17 +38,18 @@ def cifar10_dataset():
     # 创建训练数据集
     ds = tf.data.Dataset.from_tensor_slices((x, y))
     ds = ds.map(prepare_mnist_features_and_labels)
-    ds = ds.take(20000).shuffle(20000).batch(100)
+    ds = ds.take(20000).shuffle(20000).batch(100) # 取前20000个样本，打乱顺序，分批处理
 
     # 创建测试数据集
     test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
     test_ds = test_ds.map(prepare_mnist_features_and_labels)
-    test_ds = test_ds.take(20000).batch(20000)
+    test_ds = test_ds.take(20000).batch(20000) # 取前20000个样本，分批处理
     return ds, test_ds
-
+    
+# 数据预处理函数
 def prepare_mnist_features_and_labels(x, y):
-    x = tf.cast(x, tf.float32) / 255.0
-    y = tf.cast(y, tf.int64)
+    x = tf.cast(x, tf.float32) / 255.0 # 将图像数据归一化到[0,1]范围
+    y = tf.cast(y, tf.int64) # 将标签转换为int64类型
     return x, y
 
 # In[ ]:
@@ -58,16 +60,18 @@ class myConvModel(keras.Model):
     '''在这里实现alexNet模型'''
     def __init__(self):
         super(myConvModel, self).__init__()
+        # 第一层卷积层：32个5x5的卷积核，使用ReLU激活函数，same填充
         self.l1_conv = Conv2D(filters=32, 
                               kernel_size=(5, 5), 
                               activation='relu', padding='same')
-        
+        # 第二层卷积层：64个5x5的卷积核，使用ReLU激活函数，same填充        
         self.l2_conv = Conv2D(filters=64, 
                               kernel_size=(5, 5), 
                               activation='relu',padding='same')
-        
+        # 最大池化层：2x2的池化窗口，步长为2        
         self.pool = MaxPooling2D(pool_size=(2, 2), strides=2)
         
+        # 展平层：将多维输入一维化 
         self.flat = Flatten()
         self.dense1 = layers.Dense(100, activation='tanh')
         self.dense2 = layers.Dense(10)
