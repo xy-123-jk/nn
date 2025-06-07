@@ -46,8 +46,8 @@ def convertNum2Digits(Num):
     '''将一个整数转换成一个数字位的列表,例如 133412 ==> [1, 3, 3, 4, 1, 2]
     '''
     strNum = str(Num)  # 转换为字符串
-    chNums = list(strNum)
-    digitNums = [int(o) for o in strNum]
+    chNums = list(strNum)  # 将字符串转换为字符列表
+    digitNums = [int(o) for o in strNum]  # 将每个字符转换为整数
     return digitNums
 
 def convertDigits2Num(Digits):
